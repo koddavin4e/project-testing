@@ -1,41 +1,36 @@
-package ui;
+package service;
 
-import javax.swing.*;
-import java.awt.*;
+import model.Lesson;
+import model.Question;
+import org.junit.jupiter.api.Test;
 
-public class DashboardPanel extends JPanel {
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
-    public DashboardPanel(AppFrame frame) {
-        setLayout(new BorderLayout());
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-        JLabel hello = new JLabel("Привет, " + frame.getCurrentUser().getUsername() + "!", SwingConstants.CENTER);
-        hello.setFont(new Font("Arial", Font.BOLD, 24));
+public class QuizServiceTest {
 
-        JPanel buttons = new JPanel(new GridLayout(5, 1, 10, 10));
-        buttons.setBorder(BorderFactory.createEmptyBorder(30, 200, 30, 200));
+    @Test
+    void shouldCalculateScore() {
+        Lesson lesson = new Lesson(
+                1,
+                "Test",
+                "Java",
+                "Content",
+                Arrays.asList(
+                        new Question(1, "Q1", "A1", "B1", "C1", "D1", "A"),
+                        new Question(2, "Q2", "A2", "B2", "C2", "D2", "B")
+                )
+        );
 
-        JButton typingButton = new JButton("Тренажёр печати");
-        JButton scenariosButton = new JButton("Ситуационные задачи");
-        JButton lessonsButton = new JButton("Уроки и тесты");
-        JButton profileButton = new JButton("Профиль");
-        JButton logoutButton = new JButton("Выйти");
+        QuizService service = new QuizService();
+        Map<Integer, String> answers = new HashMap<>();
+        answers.put(1, "A");
+        answers.put(2, "C");
+        int score = service.calculateScore(lesson, answers);
 
-        typingButton.addActionListener(e -> frame.showTyping());
-        scenariosButton.addActionListener(e -> frame.showScenarios());
-        lessonsButton.addActionListener(e -> frame.showLessons());
-        profileButton.addActionListener(e -> frame.showProfile());
-        logoutButton.addActionListener(e -> {
-            frame.setCurrentUser(null);
-            frame.showLogin();
-        });
-
-        buttons.add(typingButton);
-        buttons.add(scenariosButton);
-        buttons.add(lessonsButton);
-        buttons.add(profileButton);
-        buttons.add(logoutButton);
-
-        add(hello, BorderLayout.NORTH);
-        add(buttons, BorderLayout.CENTER);
+        assertEquals(1, score);
     }
 }
